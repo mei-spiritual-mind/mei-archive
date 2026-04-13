@@ -475,6 +475,64 @@
     .filter-bar { gap: 8px; }
     .filter-btn { padding: 6px 14px; font-size: 12px; }
   }
+
+  /* ===== VIDEO MODAL ===== */
+  .video-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+  }
+  .video-modal.active { display: flex; }
+  .modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 900px;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(201,168,76,0.3);
+    box-shadow: 0 0 60px rgba(201,168,76,0.1);
+  }
+  .modal-content iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    background: rgba(201,168,76,0.2);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 50%;
+    color: #e8d48b;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+  }
+  .modal-close:hover {
+    background: rgba(201,168,76,0.4);
+  }
+  .modal-title {
+    position: absolute;
+    bottom: -36px;
+    left: 0;
+    color: #e8d48b;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
 </style>
 </head>
 <body>
@@ -510,8 +568,6 @@
     <span class="filter-label">カテゴリ</span>
     <button class="filter-btn active" onclick="filterVideos('all')">すべて</button>
     <button class="filter-btn" onclick="filterVideos('taboo')">タブー</button>
-    <button class="filter-btn" onclick="filterVideos('cosmos')">宇宙の真実</button>
-    <button class="filter-btn" onclick="filterVideos('ancient')">古代日本</button>
     <button class="filter-btn" onclick="filterVideos('structure')">権力構造</button>
   </div>
 
@@ -527,112 +583,24 @@
 
 <script>
 const videos = [
-  {
-    id: 1,
-    title: "【12月編】日本を裏から動かす国際ネットワークの全貌",
-    desc: "三極委員会、ビルダーバーグ、フリーメイソン…日本の政治家を選んでいるのは誰なのか。",
-    date: "2025.12",
-    duration: "62:18",
-    views: "3.2K",
-    tag: "taboo",
-    tagLabel: "タブー",
-    thumb: "linear-gradient(135deg, #1a0a0a 0%, #2a1020 50%, #0a0a2a 100%)"
-  },
-  {
-    id: 2,
-    title: "【11月編】危険すぎて表のチャンネルでは絶対に話せません",
-    desc: "明治維新のすり替え説、裏天皇の実態、八咫烏70人のネットワーク。",
-    date: "2025.11",
-    duration: "58:42",
-    views: "4.1K",
-    tag: "taboo",
-    tagLabel: "タブー",
-    thumb: "linear-gradient(135deg, #200808 0%, #301018 50%, #100820 100%)"
-  },
-  {
-    id: 3,
-    title: "【10月編】封印された出雲王朝と宇宙存在の系譜",
-    desc: "出雲の神々とシリウス星系の関係。大国主の宇宙的起源が明かされる。",
-    date: "2025.10",
-    duration: "71:05",
-    views: "3.8K",
-    tag: "ancient",
-    tagLabel: "古代日本",
-    thumb: "linear-gradient(135deg, #0a1a10 0%, #1a2a15 50%, #0a0a1a 100%)"
-  },
-  {
-    id: 4,
-    title: "この惑星の究極の真実を特別にお伝えします",
-    desc: "表では語れないこの惑星の究極の真実。プレアデスからの特別啓示。",
-    date: "2025.04",
-    duration: "65:30",
-    views: "5.2K",
-    tag: "cosmos",
-    tagLabel: "宇宙の真実",
-    thumb: "linear-gradient(135deg, #0a0a2a 0%, #101a3a 50%, #0a1a2a 100%)"
-  },
-  {
-    id: 5,
-    title: "天照大神の本当の性別と皇室の秘密",
-    desc: "ホツマツタエが語る天照男神の証拠。天岩戸事件の真相とは。",
-    date: "2025.09",
-    duration: "55:20",
-    views: "4.5K",
-    tag: "ancient",
-    tagLabel: "古代日本",
-    thumb: "linear-gradient(135deg, #1a1a08 0%, #2a2010 50%, #1a0a1a 100%)"
-  },
-  {
-    id: 6,
-    title: "宇宙存在の系譜 ─ プレアデス、シリウス、オリオンの真実",
-    desc: "善意の存在と悪意の存在の見分け方。偽チャネリングの見抜き方。",
-    date: "2025.08",
-    duration: "68:15",
-    views: "3.6K",
-    tag: "cosmos",
-    tagLabel: "宇宙の真実",
-    thumb: "linear-gradient(135deg, #08081a 0%, #0a1a3a 50%, #181830 100%)"
-  },
-  {
-    id: 7,
-    title: "三種の神器の本当の所在と裏天皇の現在",
-    desc: "なぜ三種の神器は公開されないのか。裏天皇と八咫烏の実態。",
-    date: "2025.07",
-    duration: "52:40",
-    views: "4.8K",
-    tag: "taboo",
-    tagLabel: "タブー",
-    thumb: "linear-gradient(135deg, #1a0808 0%, #201020 50%, #0a081a 100%)"
-  },
-  {
-    id: 8,
-    title: "中国臓器売買と日本保険制度の闇の接点",
-    desc: "グローバル医療産業の裏側。なぜ日本の保険制度が狙われるのか。",
-    date: "2025.06",
-    duration: "61:08",
-    views: "3.0K",
-    tag: "structure",
-    tagLabel: "権力構造",
-    thumb: "linear-gradient(135deg, #0a0a10 0%, #1a1a2a 50%, #0a1020 100%)"
-  }
+  { id: 1, title: "日本版DSの正体", desc: "【序章】見えない糸を引く者たち", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_ds.jpg", driveId: "1Z0n1csAYjZCKHE_qfL3wuVSk4cllZYXk" },
+  { id: 2, title: "民間防衛　スイスの話", desc: "【序章：真実の波動が目覚める時】", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_swiss.jpg", driveId: "1HVybc2keTaomrrRSLo1fVj8qqJ9vlJp0" },
+  { id: 3, title: "農薬解毒法　前編", desc: "あなたの食卓に潜む危険と、その解毒法", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku1.jpg", driveId: "1EmHcgXHuvClp-4VZsurhBdFzYPCejRf1" },
+  { id: 4, title: "農薬読本　後編", desc: "知られざる農薬の真実、その続き", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku2.jpg", driveId: "1fg_61dMDbj4V2MUXS2gEBvSDF1epb-7E" }
 ];
 
 function renderVideos(filter) {
   const grid = document.getElementById('videoGrid');
   const filtered = filter === 'all' ? videos : videos.filter(v => v.tag === filter);
-
   grid.innerHTML = filtered.map((v, i) => `
-    <div class="video-card" style="animation: fadeInUp 0.5s ease-out ${i * 0.08}s both" data-tag="${v.tag}">
-      <div class="card-thumb" style="background: ${v.thumb}">
-        <span class="card-duration">${v.duration}</span>
+    <div class="video-card" style="animation: fadeInUp 0.5s ease-out ${i * 0.08}s both" data-tag="${v.tag}" onclick="openVideo('${v.driveId}', '${v.title}')">
+      <div class="card-thumb">
+        <img class="card-thumb-img" src="${v.thumb}" alt="${v.title}" loading="lazy">
         <span class="card-tag tag-${v.tag}">${v.tagLabel}</span>
         <div class="card-play"></div>
       </div>
       <div class="card-body">
-        <div class="card-meta">
-          <span class="card-date">📅 ${v.date}</span>
-          <span class="card-views">👁 ${v.views} views</span>
-        </div>
+        <div class="card-meta"><span class="card-date">&#10022; ${v.date}</span></div>
         <h3 class="card-title">${v.title}</h3>
         <p class="card-desc">${v.desc}</p>
       </div>
@@ -646,9 +614,32 @@ function filterVideos(tag) {
   renderVideos(tag);
 }
 
-// Initial render
+function openVideo(driveId, title) {
+  document.getElementById('videoFrame').src = 'https://drive.google.com/file/d/' + driveId + '/preview';
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('videoModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== e.currentTarget && !e.target.classList.contains('modal-close')) return;
+  document.getElementById('videoFrame').src = '';
+  document.getElementById('videoModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 renderVideos('all');
 </script>
+
+
+<div class="video-modal" id="videoModal" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <iframe id="videoFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <div class="modal-title" id="modalTitle"></div>
+  </div>
+</div>
 
 </body>
 </html>
