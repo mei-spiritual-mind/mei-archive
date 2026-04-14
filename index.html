@@ -775,6 +775,20 @@
   .admin-toggle:hover { opacity: 1 !important; }
   .admin-toggle.visible { opacity: 0.7; }
 
+  /* スマホ向けコメント調整（高齢者対応） */
+  @media (max-width: 600px) {
+    .comment-section h2 { font-size: 1.1rem; }
+    .comment-video-select { gap: 0.4rem; }
+    .comment-video-btn { font-size: 0.9rem; padding: 0.5rem 0.8rem; }
+    .comment-form input { font-size: 1rem; padding: 0.8rem; }
+    .comment-form textarea { font-size: 1rem; padding: 0.8rem; min-height: 100px; }
+    .comment-form button { font-size: 1rem; padding: 0.6rem 1.5rem; }
+    .comment-name { font-size: 1rem; }
+    .comment-text { font-size: 1rem; line-height: 1.8; }
+    .comment-time { font-size: 0.8rem; }
+    .comment-item { padding: 1rem 0.8rem; }
+  }
+
 </style>
 
 <script type="module">
