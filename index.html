@@ -793,8 +793,86 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.firebaseDb = db;
-window.fbFuncs = { collection, addDoc, query, where, orderBy, onSnapshot, deleteDoc, doc, serverTimestamp };
+// Comment system
+let currentVideoId = null;
+let isAdmin = false;
+let unsubscribe = null;
+
+function buildVideoButtons() {
+  const container = document.getElementById('commentVideoSelect');
+  if (!container) return;
+  const vids = typeof videos !== 'undefined' ? videos : [];
+  container.innerHTML = vids.map(v =>
+    '<button class="comment-video-btn" onclick="window.selectCommentVideo(' + v.id + ')">' + v.title + '</button>'
+  ).join('');
+}
+
+window.selectCommentVideo = function(videoId) {
+  currentVideoId = String(videoId);
+  document.querySelectorAll('.comment-video-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === videoId - 1);
+  });
+  document.getElementById('commentForm').style.display = 'block';
+  loadComments();
+};
+
+function loadComments() {
+  if (unsubscribe) unsubscribe();
+  const list = document.getElementById('commentList');
+  list.innerHTML = '<div class="no-comments">読み込み中...</div>';
+  const q = query(collection(db, 'comments'), where('videoId', '==', currentVideoId), orderBy('createdAt', 'desc'));
+  unsubscribe = onSnapshot(q, (snapshot) => {
+    if (snapshot.empty) {
+      list.innerHTML = '<div class="no-comments">まだコメントがありません。最初のコメントを書いてみましょう！</div>';
+      return;
+    }
+    list.innerHTML = snapshot.docs.map(d => {
+      const data = d.data();
+      const time = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('ja-JP', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+      return '<div class="comment-item"><div class="comment-header"><span class="comment-name">' + esc(data.name) + '</span><span class="comment-time">' + time + '</span></div><div class="comment-text">' + esc(data.text) + '</div><button class="comment-delete" onclick="window.deleteComment(\x27' + d.id + '\x27)">\u00d7</button></div>';
+    }).join('');
+  }, (err) => { list.innerHTML = '<div class="no-comments">コメントの読み込みに失敗しました</div>'; console.error(err); });
+}
+
+window.postComment = async function() {
+  const name = document.getElementById('commentName').value.trim();
+  const text = document.getElementById('commentText').value.trim();
+  if (!name) { alert('ニックネームを入力してください'); return; }
+  if (!text) { alert('コメントを入力してください'); return; }
+  if (!currentVideoId) return;
+  try {
+    await addDoc(collection(db, 'comments'), { videoId: currentVideoId, name, text, createdAt: serverTimestamp() });
+    document.getElementById('commentText').value = '';
+    localStorage.setItem('mei_comment_name', name);
+  } catch (e) { alert('送信に失敗しました'); console.error(e); }
+};
+
+window.deleteComment = async function(commentId) {
+  if (!isAdmin) return;
+  if (!confirm('このコメントを削除しますか？')) return;
+  try { await deleteDoc(doc(db, 'comments', commentId)); } catch (e) { alert('削除に失敗しました'); }
+};
+
+window.toggleAdmin = function() {
+  if (isAdmin) { isAdmin = false; document.body.classList.remove('admin-mode'); document.getElementById('adminToggle').textContent = '管理者'; return; }
+  const pw = prompt('管理者パスワード:');
+  if (pw === 'mei-admin-2026') { isAdmin = true; document.body.classList.add('admin-mode'); document.getElementById('adminToggle').textContent = '管理者モード ON'; document.getElementById('adminToggle').classList.add('visible'); }
+  else if (pw) { alert('パスワードが違います'); }
+};
+
+document.querySelector('.site-footer')?.addEventListener('click', () => {
+  const btn = document.getElementById('adminToggle');
+  btn.classList.add('visible');
+  setTimeout(() => { if (!isAdmin) btn.classList.remove('visible'); }, 5000);
+});
+
+function esc(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+const savedName = localStorage.getItem('mei_comment_name');
+if (savedName && document.getElementById('commentName')) document.getElementById('commentName').value = savedName;
+
+// Wait for DOM and videos variable
+setTimeout(buildVideoButtons, 500);
 </script>
 
 </head>
@@ -932,140 +1010,6 @@ renderVideos('all');
 </div>
 
 
-<script type="module">
-const db = window.firebaseDb;
-const { collection, addDoc, query, where, orderBy, onSnapshot, deleteDoc, doc, serverTimestamp } = window.fbFuncs;
-
-let currentVideoId = null;
-let isAdmin = false;
-let unsubscribe = null;
-const ADMIN_HASH = 'b4a9e8c1d5f2e3a7b6c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9';
-
-// Build video select buttons
-function buildVideoButtons() {
-  const container = document.getElementById('commentVideoSelect');
-  const vids = typeof videos !== 'undefined' ? videos : [];
-  container.innerHTML = vids.map(v =>
-    '<button class="comment-video-btn" onclick="window.selectCommentVideo(' + v.id + ')">' + v.title + '</button>'
-  ).join('');
-}
-
-// Select video for comments
-window.selectCommentVideo = function(videoId) {
-  currentVideoId = String(videoId);
-  document.querySelectorAll('.comment-video-btn').forEach((btn, i) => {
-    btn.classList.toggle('active', i === videoId - 1);
-  });
-  document.getElementById('commentForm').style.display = 'block';
-  loadComments();
-};
-
-// Load comments for selected video
-function loadComments() {
-  if (unsubscribe) unsubscribe();
-  const list = document.getElementById('commentList');
-  list.innerHTML = '<div class="no-comments">読み込み中...</div>';
-
-  const q = query(
-    collection(db, 'comments'),
-    where('videoId', '==', currentVideoId),
-    orderBy('createdAt', 'desc')
-  );
-
-  unsubscribe = onSnapshot(q, (snapshot) => {
-    if (snapshot.empty) {
-      list.innerHTML = '<div class="no-comments">まだコメントがありません。最初のコメントを書いてみましょう！</div>';
-      return;
-    }
-    list.innerHTML = snapshot.docs.map(d => {
-      const data = d.data();
-      const time = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('ja-JP', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : '';
-      return '<div class="comment-item">' +
-        '<div class="comment-header"><span class="comment-name">' + escapeHtml(data.name) + '</span><span class="comment-time">' + time + '</span></div>' +
-        '<div class="comment-text">' + escapeHtml(data.text) + '</div>' +
-        '<button class="comment-delete" onclick="window.deleteComment(\'' + d.id + '\')">&times;</button>' +
-        '</div>';
-    }).join('');
-  }, (error) => {
-    list.innerHTML = '<div class="no-comments">コメントの読み込みに失敗しました</div>';
-    console.error(error);
-  });
-}
-
-// Post comment
-window.postComment = async function() {
-  const name = document.getElementById('commentName').value.trim();
-  const text = document.getElementById('commentText').value.trim();
-  if (!name) { alert('ニックネームを入力してください'); return; }
-  if (!text) { alert('コメントを入力してください'); return; }
-  if (!currentVideoId) return;
-
-  try {
-    await addDoc(collection(db, 'comments'), {
-      videoId: currentVideoId,
-      name: name,
-      text: text,
-      createdAt: serverTimestamp()
-    });
-    document.getElementById('commentText').value = '';
-    localStorage.setItem('mei_comment_name', name);
-  } catch (e) {
-    alert('送信に失敗しました。もう一度お試しください。');
-    console.error(e);
-  }
-};
-
-// Delete comment (admin only)
-window.deleteComment = async function(commentId) {
-  if (!isAdmin) return;
-  if (!confirm('このコメントを削除しますか？')) return;
-  try {
-    await deleteDoc(doc(db, 'comments', commentId));
-  } catch (e) {
-    alert('削除に失敗しました');
-    console.error(e);
-  }
-};
-
-// Toggle admin mode
-window.toggleAdmin = function() {
-  if (isAdmin) {
-    isAdmin = false;
-    document.body.classList.remove('admin-mode');
-    document.getElementById('adminToggle').textContent = '管理者';
-    return;
-  }
-  const pw = prompt('管理者パスワード:');
-  if (pw === 'mei-admin-2026') {
-    isAdmin = true;
-    document.body.classList.add('admin-mode');
-    document.getElementById('adminToggle').textContent = '管理者モード ON';
-    document.getElementById('adminToggle').classList.add('visible');
-  } else if (pw) {
-    alert('パスワードが違います');
-  }
-};
-
-// Show admin button on triple-click footer
-document.querySelector('.site-footer')?.addEventListener('click', () => {
-  const btn = document.getElementById('adminToggle');
-  btn.classList.add('visible');
-  setTimeout(() => { if (!isAdmin) btn.classList.remove('visible'); }, 5000);
-});
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-// Restore saved nickname
-const savedName = localStorage.getItem('mei_comment_name');
-if (savedName) document.getElementById('commentName').value = savedName;
-
-// Init
-setTimeout(buildVideoButtons, 100);
-</script>
 
 <script>
 async function sha256(msg) {
