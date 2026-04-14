@@ -803,8 +803,11 @@ function buildVideoButtons() {
   if (!container) return;
   const vids = typeof videos !== 'undefined' ? videos : [];
   container.innerHTML = vids.map(v =>
-    '<button class="comment-video-btn" onclick="window.selectCommentVideo(' + v.id + ')">' + v.title + '</button>'
+    '<button class="comment-video-btn" data-vid="' + v.id + '">' + v.title + '</button>'
   ).join('');
+  container.querySelectorAll('.comment-video-btn').forEach(btn => {
+    btn.addEventListener('click', () => window.selectCommentVideo(parseInt(btn.dataset.vid)));
+  });
 }
 
 window.selectCommentVideo = function(videoId) {
