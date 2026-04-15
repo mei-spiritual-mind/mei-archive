@@ -970,18 +970,19 @@ setTimeout(buildVideoButtons, 500);
 </div>
 
 <script>
+// driveIds: 配列で複数登録可能（アクセス分散用）。2つ目以降はバックアップ用ミラー
 const videos = [
-  { id: 1, title: "見えない糸を引く者たち", desc: "日本を操る構造の正体", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_ds.jpg", driveId: "1Z0n1csAYjZCKHE_qfL3wuVSk4cllZYXk" },
-  { id: 2, title: "スイスが教える静かなる侵略", desc: "民間防衛の警告", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_swiss.jpg", driveId: "1HVybc2keTaomrrRSLo1fVj8qqJ9vlJp0" },
-  { id: 3, title: "あか牛チャネラー真理子の体験談", desc: "【前編】", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku1.jpg", driveId: "1EmHcgXHuvClp-4VZsurhBdFzYPCejRf1" },
-  { id: 4, title: "あか牛チャネラー真理子の体験談", desc: "【後編】", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku2.jpg", driveId: "1fg_61dMDbj4V2MUXS2gEBvSDF1epb-7E" }
+  { id: 1, title: "見えない糸を引く者たち", desc: "日本を操る構造の正体", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_ds.jpg", driveIds: ["1Z0n1csAYjZCKHE_qfL3wuVSk4cllZYXk"] },
+  { id: 2, title: "スイスが教える静かなる侵略", desc: "民間防衛の警告", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_swiss.jpg", driveIds: ["1HVybc2keTaomrrRSLo1fVj8qqJ9vlJp0"] },
+  { id: 3, title: "あか牛チャネラー真理子の体験談", desc: "【前編】", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku1.jpg", driveIds: ["1EmHcgXHuvClp-4VZsurhBdFzYPCejRf1"] },
+  { id: 4, title: "あか牛チャネラー真理子の体験談", desc: "【後編】", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku2.jpg", driveIds: ["1fg_61dMDbj4V2MUXS2gEBvSDF1epb-7E"] }
 ];
 
 function renderVideos(filter) {
   const grid = document.getElementById('videoGrid');
   const filtered = filter === 'all' ? videos : videos.filter(v => v.tag === filter);
   grid.innerHTML = filtered.map((v, i) => `
-    <div class="video-card" style="animation: fadeInUp 0.5s ease-out ${i * 0.08}s both" data-tag="${v.tag}" onclick="openVideo('${v.driveId}', '${v.title}')">
+    <div class="video-card" style="animation: fadeInUp 0.5s ease-out ${i * 0.08}s both" data-tag="${v.tag}" onclick="openVideo(${v.id})">
       <div class="card-thumb">
         <img class="card-thumb-img" src="${v.thumb}" alt="${v.title}" loading="lazy">
         <span class="card-tag tag-${v.tag}">${v.tagLabel}</span>
@@ -1002,8 +1003,19 @@ function filterVideos(tag) {
   renderVideos(tag);
 }
 
-function openVideo(driveId, title) {
-  window.open('https://drive.google.com/file/d/' + driveId + '/view', '_blank');
+function openVideo(videoId) {
+  const v = videos.find(x => x.id === videoId);
+  if (!v) return;
+  const ids = v.driveIds || (v.driveId ? [v.driveId] : []);
+  if (!ids.length) return;
+  // 複数IDがある場合はランダム選択（アクセス分散）
+  const driveId = ids[Math.floor(Math.random() * ids.length)];
+  // /preview を使用（Googleログイン不要、iframeで直接再生）
+  const url = 'https://drive.google.com/file/d/' + driveId + '/preview';
+  document.getElementById('videoFrame').src = url;
+  document.getElementById('modalTitle').textContent = v.title + (v.desc ? '　' + v.desc : '');
+  document.getElementById('videoModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeModal(e) {
