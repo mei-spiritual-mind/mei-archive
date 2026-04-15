@@ -970,12 +970,11 @@ setTimeout(buildVideoButtons, 500);
 </div>
 
 <script>
-// driveIds: 配列で複数登録可能（アクセス分散用）。2つ目以降はバックアップ用ミラー
 const videos = [
-  { id: 1, title: "見えない糸を引く者たち", desc: "日本を操る構造の正体", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_ds.jpg", driveIds: ["1Z0n1csAYjZCKHE_qfL3wuVSk4cllZYXk"] },
-  { id: 2, title: "スイスが教える静かなる侵略", desc: "民間防衛の警告", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_swiss.jpg", driveIds: ["1HVybc2keTaomrrRSLo1fVj8qqJ9vlJp0"] },
-  { id: 3, title: "あか牛チャネラー真理子の体験談", desc: "【前編】", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku1.jpg", driveIds: ["1EmHcgXHuvClp-4VZsurhBdFzYPCejRf1"] },
-  { id: 4, title: "あか牛チャネラー真理子の体験談", desc: "【後編】", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku2.jpg", driveIds: ["1fg_61dMDbj4V2MUXS2gEBvSDF1epb-7E"] }
+  { id: 1, title: "見えない糸を引く者たち", desc: "日本を操る構造の正体", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_ds.jpg", vimeoId: "1183534408" },
+  { id: 2, title: "スイスが教える静かなる侵略", desc: "民間防衛の警告", date: "メンバーシップ限定", tag: "structure", tagLabel: "権力構造", thumb: "thumbs/thumb_swiss.jpg", vimeoId: "1183534104" },
+  { id: 3, title: "あか牛チャネラー真理子の体験談", desc: "【前編】", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku1.jpg", vimeoId: "1183533745" },
+  { id: 4, title: "あか牛チャネラー真理子の体験談", desc: "【後編】", date: "メンバーシップ限定", tag: "taboo", tagLabel: "タブー", thumb: "thumbs/thumb_nouyaku2.jpg", vimeoId: "1183533531" }
 ];
 
 function renderVideos(filter) {
@@ -1005,13 +1004,9 @@ function filterVideos(tag) {
 
 function openVideo(videoId) {
   const v = videos.find(x => x.id === videoId);
-  if (!v) return;
-  const ids = v.driveIds || (v.driveId ? [v.driveId] : []);
-  if (!ids.length) return;
-  // 複数IDがある場合はランダム選択（アクセス分散）
-  const driveId = ids[Math.floor(Math.random() * ids.length)];
-  // /preview を使用（Googleログイン不要、iframeで直接再生）
-  const url = 'https://drive.google.com/file/d/' + driveId + '/preview';
+  if (!v || !v.vimeoId) return;
+  // Vimeoプレーヤー埋め込み（ダウンロード禁止・ログイン不要）
+  const url = 'https://player.vimeo.com/video/' + v.vimeoId + '?autoplay=1&byline=0&portrait=0&title=0';
   document.getElementById('videoFrame').src = url;
   document.getElementById('modalTitle').textContent = v.title + (v.desc ? '　' + v.desc : '');
   document.getElementById('videoModal').classList.add('active');
