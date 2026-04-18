@@ -7,6 +7,11 @@
 <meta property="og:title" content="もう降りてこなくなりました — Spiritual Mind メイの宇宙啓示">
 <meta property="og:description" content="あなたの祈りが届かない本当の理由をお話しします。YouTube再審査期間中の特別無料公開。">
 <meta property="og:type" content="video.other">
+<meta property="og:image" content="https://mei-spiritual-mind.github.io/mei-archive/free/thumbnail.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="670">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mei-spiritual-mind.github.io/mei-archive/free/thumbnail.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -173,12 +178,60 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 80px rgba(201,168,76,0.08);
     border: 1px solid var(--border);
     animation: fadeInUp 0.8s ease-out 0.4s both;
+    cursor: pointer;
   }
   .video-frame-wrap iframe {
     width: 100%;
     height: 100%;
     border: 0;
     display: block;
+  }
+  .video-poster {
+    position: absolute;
+    inset: 0;
+    background-image: url('thumbnail.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+  }
+  .video-poster::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.4) 100%);
+    transition: background 0.3s;
+  }
+  .video-frame-wrap:hover .video-poster::after {
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 100%);
+  }
+  .play-button {
+    position: relative;
+    z-index: 2;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 40px rgba(201,168,76,0.5), 0 10px 30px rgba(0,0,0,0.4);
+    transition: all 0.3s;
+  }
+  .video-frame-wrap:hover .play-button {
+    transform: scale(1.1);
+    background: rgba(232,212,139,1);
+  }
+  .play-button::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 18px 0 18px 30px;
+    border-color: transparent transparent transparent #06060f;
+    margin-left: 8px;
   }
 
   /* ===== NOTICE ===== */
@@ -282,12 +335,20 @@
     <p class="video-desc">あなたの祈りが届かない本当の理由をお話しします</p>
   </div>
 
-  <div class="video-frame-wrap">
-    <iframe
-      src="https://player.vimeo.com/video/1184319674?byline=0&portrait=0&title=0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen></iframe>
+  <div class="video-frame-wrap" id="videoWrap" onclick="playVideo()">
+    <div class="video-poster" id="videoPoster">
+      <div class="play-button"></div>
+    </div>
   </div>
+
+  <script>
+    function playVideo() {
+      var wrap = document.getElementById('videoWrap');
+      wrap.innerHTML = '<iframe src="https://player.vimeo.com/video/1184319674?autoplay=1&byline=0&portrait=0&title=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+      wrap.style.cursor = 'default';
+      wrap.onclick = null;
+    }
+  </script>
 
   <div class="notice-box">
     <div class="notice-title">✦ この動画について</div>
