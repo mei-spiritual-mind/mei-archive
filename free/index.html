@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spiritual Mind メイの宇宙啓示 - 特別無料公開</title>
+<meta property="og:title" content="もう降りてこなくなりました — Spiritual Mind メイの宇宙啓示">
+<meta property="og:description" content="あなたの祈りが届かない本当の理由をお話しします。YouTube再審査期間中の特別無料公開。">
+<meta property="og:type" content="video.other">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-deep: #06060f;
+    --bg-card: rgba(14, 14, 30, 0.7);
+    --gold: #c9a84c;
+    --gold-light: #e8d48b;
+    --gold-dark: #8b6914;
+    --blue-gem: #2d7ec7;
+    --blue-glow: #4da8ff;
+    --text-primary: #e8e4dc;
+    --text-muted: #9a9590;
+    --text-dim: #5a5550;
+    --border: rgba(201,168,76,0.15);
+  }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* ===== COSMIC BACKGROUND ===== */
+  .cosmos {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 120% 80% at 20% 10%, rgba(20,15,50,0.9) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 60% at 80% 90%, rgba(10,20,45,0.7) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 50% at 50% 50%, rgba(45,126,199,0.04) 0%, transparent 70%),
+      var(--bg-deep);
+  }
+
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .stars::before, .stars::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,0.6) 50%, transparent 100%),
+      radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,0.4) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 15%, rgba(255,255,255,0.5) 50%, transparent 100%),
+      radial-gradient(1px 1px at 70% 45%, rgba(201,168,76,0.5) 50%, transparent 100%),
+      radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.3) 50%, transparent 100%),
+      radial-gradient(2px 2px at 15% 85%, rgba(77,168,255,0.4) 50%, transparent 100%),
+      radial-gradient(1px 1px at 45% 40%, rgba(255,255,255,0.35) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 90% 10%, rgba(255,255,255,0.5) 50%, transparent 100%),
+      radial-gradient(1px 1px at 60% 80%, rgba(201,168,76,0.3) 50%, transparent 100%),
+      radial-gradient(1px 1px at 25% 50%, rgba(255,255,255,0.25) 50%, transparent 100%);
+    animation: twinkle 8s ease-in-out infinite alternate;
+  }
+
+  .stars::after {
+    background-image:
+      radial-gradient(1px 1px at 5% 45%, rgba(255,255,255,0.4) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 10%, rgba(255,255,255,0.5) 50%, transparent 100%),
+      radial-gradient(1px 1px at 65% 60%, rgba(201,168,76,0.35) 50%, transparent 100%),
+      radial-gradient(1px 1px at 80% 25%, rgba(255,255,255,0.3) 50%, transparent 100%),
+      radial-gradient(2px 2px at 95% 55%, rgba(77,168,255,0.3) 50%, transparent 100%),
+      radial-gradient(1px 1px at 20% 90%, rgba(255,255,255,0.4) 50%, transparent 100%),
+      radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,0.2) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 75% 5%, rgba(201,168,76,0.4) 50%, transparent 100%);
+    animation: twinkle 12s ease-in-out infinite alternate-reverse;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  /* ===== LAYOUT ===== */
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    text-align: center;
+    padding: 60px 0 30px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 100px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    backdrop-filter: blur(10px);
+    background: rgba(201,168,76,0.05);
+    animation: fadeInUp 0.8s ease-out;
+  }
+  .hero-badge::before { content: '✦'; font-size: 8px; }
+
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 500;
+    color: var(--gold-light);
+    line-height: 1.3;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    animation: fadeInUp 0.8s ease-out 0.1s both;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(13px, 1.8vw, 16px);
+    font-weight: 300;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+  }
+
+  /* ===== VIDEO TITLE ===== */
+  .video-title-box {
+    text-align: center;
+    margin: 30px 0 24px;
+    animation: fadeInUp 0.8s ease-out 0.3s both;
+  }
+  .video-title {
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+  .video-desc {
+    font-size: clamp(14px, 1.6vw, 18px);
+    font-weight: 400;
+    color: var(--gold);
+    line-height: 1.6;
+  }
+
+  /* ===== VIDEO PLAYER ===== */
+  .video-frame-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 80px rgba(201,168,76,0.08);
+    border: 1px solid var(--border);
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+  }
+  .video-frame-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  /* ===== NOTICE ===== */
+  .notice-box {
+    margin: 40px auto 20px;
+    padding: 24px 28px;
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    max-width: 760px;
+    animation: fadeInUp 0.8s ease-out 0.5s both;
+  }
+  .notice-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .notice-body {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.9;
+  }
+  .notice-body em {
+    color: var(--gold-light);
+    font-style: normal;
+  }
+
+  /* ===== LINKS ===== */
+  .link-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 40px 0 60px;
+    animation: fadeInUp 0.8s ease-out 0.6s both;
+  }
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s;
+    backdrop-filter: blur(10px);
+    background: rgba(14,14,30,0.4);
+  }
+  .link-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-light);
+    background: rgba(201,168,76,0.08);
+  }
+  .link-btn.primary {
+    background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.1));
+    border-color: rgba(201,168,76,0.5);
+  }
+
+  /* ===== FOOTER ===== */
+  .site-footer {
+    text-align: center;
+    padding: 40px 0 60px;
+    color: var(--text-dim);
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .hero { padding: 40px 0 20px; }
+    .notice-box { padding: 18px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cosmos"></div>
+<div class="stars"></div>
+
+<div class="page-wrapper">
+
+  <section class="hero">
+    <div class="hero-badge">Special Free Release</div>
+    <h1 class="hero-title">Spiritual Mind<br>メイの宇宙啓示</h1>
+    <p class="hero-subtitle">特別無料公開ページ</p>
+  </section>
+
+  <div class="video-title-box">
+    <h2 class="video-title">もう降りてこなくなりました</h2>
+    <p class="video-desc">あなたの祈りが届かない本当の理由をお話しします</p>
+  </div>
+
+  <div class="video-frame-wrap">
+    <iframe
+      src="https://player.vimeo.com/video/1184319674?byline=0&portrait=0&title=0"
+      allow="autoplay; fullscreen; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+
+  <div class="notice-box">
+    <div class="notice-title">✦ この動画について</div>
+    <p class="notice-body">
+      本来はYouTubeで公開予定だった動画ですが、<em>現在チャンネル再審査中</em>のため、こちらで特別に無料公開しています。<br>
+      普段はメンバーシップ限定で配信している内容の延長にある、少し踏み込んだテーマです。ごゆっくりお楽しみください。
+    </p>
+  </div>
+
+  <div class="link-row">
+    <a class="link-btn primary" href="https://note.com/spiritual_mei" target="_blank" rel="noopener">✦ noteで他の記事を読む</a>
+  </div>
+
+  <footer class="site-footer">
+    ✦ Spiritual Mind メイの宇宙啓示 ✦
+  </footer>
+
+</div>
+
+</body>
+</html>
