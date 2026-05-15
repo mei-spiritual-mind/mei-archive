@@ -2989,6 +2989,24 @@
 
   .comment-delete:hover { background: rgba(200,50,50,0.6); }
 
+  .comment-delete-own {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 8px 18px;
+    background: rgba(201, 168, 76, 0.15);
+    border: 1px solid rgba(201, 168, 76, 0.4);
+    color: #e8d48b;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+
+  .comment-delete-own:hover {
+    background: rgba(201, 168, 76, 0.3);
+  }
+
 
 
   .admin-mode .comment-delete { display: flex; }
@@ -3340,22 +3358,14 @@ function loadComments() {
 
 
 
+    let myComments = [];
+    try { myComments = JSON.parse(localStorage.getItem('mei_my_comments') || '[]'); } catch(e) {}
     list.innerHTML = snapshot.docs.map(d => {
-
-
-
       const data = d.data();
-
-
-
       const time = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('ja-JP', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
-
-
-
-      return '<div class="comment-item"><div class="comment-header"><span class="comment-name">' + esc(data.name) + '</span><span class="comment-time">' + time + '</span></div><div class="comment-text">' + esc(data.text) + '</div><button class="comment-delete" onclick="window.deleteComment(\x27' + d.id + '\x27)">\u00d7</button></div>';
-
-
-
+      const isMine = myComments.indexOf(d.id) !== -1;
+      const ownBtn = isMine ? '<button class="comment-delete-own" onclick="window.deleteOwnComment(\x27' + d.id + '\x27)">自分のコメントを削除する</button>' : '';
+      return '<div class="comment-item"><div class="comment-header"><span class="comment-name">' + esc(data.name) + '</span><span class="comment-time">' + time + '</span></div><div class="comment-text">' + esc(data.text) + '</div>' + ownBtn + '<button class="comment-delete" onclick="window.deleteComment(\x27' + d.id + '\x27)">\u00d7</button></div>';
     }).join('');
 
 
@@ -3400,7 +3410,12 @@ window.postComment = async function() {
 
 
 
-    await addDoc(collection(db, 'comments'), { videoId: currentVideoId, name, text, createdAt: serverTimestamp() });
+    const docRef = await addDoc(collection(db, 'comments'), { videoId: currentVideoId, name, text, createdAt: serverTimestamp() });
+    try {
+      const my = JSON.parse(localStorage.getItem('mei_my_comments') || '[]');
+      my.push(docRef.id);
+      localStorage.setItem('mei_my_comments', JSON.stringify(my));
+    } catch(err) {}
 
 
 
@@ -3425,21 +3440,19 @@ window.postComment = async function() {
 
 
 window.deleteComment = async function(commentId) {
-
-
-
   if (!isAdmin) return;
-
-
-
   if (!confirm('このコメントを削除しますか？')) return;
-
-
-
   try { await deleteDoc(doc(db, 'comments', commentId)); } catch (e) { alert('削除に失敗しました'); }
+};
 
-
-
+window.deleteOwnComment = async function(commentId) {
+  if (!confirm('あなたのコメントを削除しますか？\n（投稿し直しが必要です）')) return;
+  try {
+    await deleteDoc(doc(db, 'comments', commentId));
+    const my = JSON.parse(localStorage.getItem('mei_my_comments') || '[]');
+    const filtered = my.filter(id => id !== commentId);
+    localStorage.setItem('mei_my_comments', JSON.stringify(filtered));
+  } catch (e) { alert('削除に失敗しました'); console.error(e); }
 };
 
 
