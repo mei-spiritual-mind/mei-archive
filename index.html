@@ -1959,66 +1959,51 @@
 
 
   .modal-content {
-
-
-
     position: relative;
-
-
-
-    width: 90%;
-
-
-
-    max-width: 900px;
-
-
-
-    aspect-ratio: 16/9;
-
-
-
-    background: #000;
-
-
-
+    width: 95%;
+    max-width: 760px;
+    max-height: 92vh;
+    background: #0a0f1e;
     border-radius: 12px;
-
-
-
-    overflow: hidden;
-
-
-
+    overflow-y: auto;
+    overflow-x: hidden;
     border: 1px solid rgba(201,168,76,0.3);
-
-
-
     box-shadow: 0 0 60px rgba(201,168,76,0.1);
-
-
-
+    display: flex;
+    flex-direction: column;
   }
 
-
-
-  .modal-content iframe {
-
-
-
+  .modal-video-wrap {
     width: 100%;
-
-
-
-    height: 100%;
-
-
-
-    border: none;
-
-
-
+    aspect-ratio: 16/9;
+    background: #000;
+    flex-shrink: 0;
   }
+
+  .modal-video-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  .modal-comments {
+    padding: 24px 20px 32px;
+    border-top: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .modal-comments h3 {
+    color: #e8d48b;
+    font-size: clamp(16px, 3.5vw, 19px);
+    text-align: center;
+    margin: 0 0 18px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+
+
+
 
 
 
@@ -3303,33 +3288,10 @@ function buildVideoButtons() {
 
 
 window.selectCommentVideo = function(videoId) {
-
-
-
   currentVideoId = String(videoId);
-
-
-
-  document.querySelectorAll('.comment-video-btn').forEach((btn, i) => {
-
-
-
-    btn.classList.toggle('active', i === videoId - 1);
-
-
-
-  });
-
-
-
-  document.getElementById('commentForm').style.display = 'block';
-
-
-
+  const form = document.getElementById('commentForm');
+  if (form) form.style.display = 'block';
   loadComments();
-
-
-
 };
 
 
@@ -3562,7 +3524,7 @@ if (savedName && document.getElementById('commentName')) document.getElementById
 
 
 
-setTimeout(buildVideoButtons, 500);
+// setTimeout(buildVideoButtons, 500); // disabled: modal has its own comment section now
 
 
 
@@ -3798,51 +3760,7 @@ setTimeout(buildVideoButtons, 500);
 
 
 
-  <div class="comment-section" id="commentSection">
 
-
-
-    <h2>✦ Members Comment ✦</h2>
-
-
-
-    <div class="comment-video-select" id="commentVideoSelect"></div>
-
-
-
-    <div class="comment-form" id="commentForm" style="display:none">
-
-
-
-      <input type="text" id="commentName" placeholder="ニックネーム" maxlength="20">
-
-
-
-      <textarea id="commentText" placeholder="コメントを書く..." maxlength="500"></textarea>
-
-
-
-      <button onclick="postComment()">送信する</button>
-
-
-
-    </div>
-
-
-
-    <div class="comment-list" id="commentList">
-
-
-
-      <div class="no-comments">動画を選んでコメントを見る</div>
-
-
-
-    </div>
-
-
-
-  </div>
 
 
 
@@ -4004,41 +3922,17 @@ function filterVideos(tag) {
 
 
 function openVideo(videoId) {
-
-
-
   const v = videos.find(x => x.id === videoId);
-
-
-
   if (!v || !v.vimeoId) return;
-
-
-
-  // Vimeoプレーヤー埋め込み（ダウンロード禁止・ログイン不要）
-
-
-
   const url = 'https://player.vimeo.com/video/' + v.vimeoId + '?autoplay=1&byline=0&portrait=0&title=0';
-
-
-
   document.getElementById('videoFrame').src = url;
-
-
-
   document.getElementById('modalTitle').textContent = v.title + (v.desc ? '　' + v.desc : '');
-
-
-
   document.getElementById('videoModal').classList.add('active');
-
-
-
   document.body.style.overflow = 'hidden';
-
-
-
+  // Load comments for this video
+  if (typeof window.selectCommentVideo === 'function') {
+    window.selectCommentVideo(videoId);
+  }
 }
 
 
@@ -4048,25 +3942,17 @@ function openVideo(videoId) {
 
 
 function closeModal(e) {
-
-
-
   if (e && e.target !== e.currentTarget && !e.target.classList.contains('modal-close')) return;
-
-
-
   document.getElementById('videoFrame').src = '';
-
-
-
   document.getElementById('videoModal').classList.remove('active');
-
-
-
   document.body.style.overflow = '';
-
-
-
+  // Unsubscribe from Firestore listener
+  if (typeof unsubscribe !== 'undefined' && unsubscribe) {
+    try { unsubscribe(); } catch(e){}
+  }
+  // Reset modal scroll
+  const mc = document.querySelector('.modal-content');
+  if (mc) mc.scrollTop = 0;
 }
 
 
@@ -4096,29 +3982,24 @@ renderVideos('all');
 
 
 <div class="video-modal" id="videoModal" onclick="closeModal(event)">
-
-
-
   <div class="modal-content" onclick="event.stopPropagation()">
-
-
-
     <button class="modal-close" onclick="closeModal()">&times;</button>
-
-
-
-    <iframe id="videoFrame" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-
-
-
+    <div class="modal-video-wrap">
+      <iframe id="videoFrame" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </div>
     <div class="modal-title" id="modalTitle"></div>
-
-
-
+    <div class="modal-comments">
+      <h3>✦ この動画への感想・コメント ✦</h3>
+      <div class="comment-form" id="commentForm">
+        <input type="text" id="commentName" placeholder="ニックネーム" maxlength="20">
+        <textarea id="commentText" placeholder="コメントを書く..." maxlength="500"></textarea>
+        <button onclick="postComment()">送信する</button>
+      </div>
+      <div class="comment-list" id="commentList">
+        <div class="no-comments">読み込み中...</div>
+      </div>
+    </div>
   </div>
-
-
-
 </div>
 
 
